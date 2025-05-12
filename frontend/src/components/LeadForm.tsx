@@ -32,8 +32,8 @@ const LeadForm: React.FC = () => {
 
     return (
         <Container maxWidth="sm">
-            <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
-                <Typography variant="h4" component="h1" gutterBottom align="center">
+            <Paper elevation={3} sx={{ py: 8, px: 6, mt: 4 }}>
+                <Typography variant="h5" component="h1" gutterBottom align="center" sx={{ mb: 1, fontWeight: "bold" }}>
                     Welcome to Our Sales Assistant
                 </Typography>
                 <Typography variant="body1" gutterBottom align="center" sx={{ mb: 4 }}>
@@ -53,7 +53,7 @@ const LeadForm: React.FC = () => {
                         required
                     />
 
-                    <Button type="submit" fullWidth variant="contained" color="primary" size="large" sx={{ mt: 3 }}>
+                    <Button type="submit" fullWidth variant="contained" color="primary" size="large" sx={{ mt: 3, borderRadius: 2 }}>
                         Start Conversation
                     </Button>
                 </Box>

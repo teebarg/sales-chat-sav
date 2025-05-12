@@ -10,7 +10,7 @@ all: client server
 
 # Client target
 client:
-	cd client && npm install && npm start
+	cd frontend && npm install && npm start
 
 # Server target
 server:
@@ -18,7 +18,7 @@ server:
 
 # Clean target
 clean:
-	rm -rf client/build
+	rm -rf frontend/build
 	rm -rf server/dist
 
 dev: ## Serve the project in terminal

@@ -27,7 +27,7 @@ export const processUserMessage = (
     // Clone the objects to avoid mutation
     const updatedLead = { email: lead.email, companyName: lead.companyName, relevanceTag: lead.relevanceTag };
     const updatedState = { ...conversationState };
-    console.log("🚀 ~ updatedLead:", updatedLead);
+
     let response = "";
 
     const messageLower = message.toLowerCase();

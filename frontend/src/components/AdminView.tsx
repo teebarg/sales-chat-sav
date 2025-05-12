@@ -12,7 +12,9 @@ import {
     Chip,
     CircularProgress,
     Container,
+    Button,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import { getLeads } from "../services/api";
 import { Lead } from "../types";
 
@@ -35,6 +37,7 @@ const AdminView: React.FC = () => {
     const [leads, setLeads] = useState<Lead[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchLeads = async () => {
@@ -42,8 +45,7 @@ const AdminView: React.FC = () => {
                 const data = await getLeads();
                 setLeads(data);
             } catch (err) {
-                setError("Failed to fetch leads. Please try again later.");
-                console.error("Error fetching leads:", err);
+                setError("Failed to fetch leads. Please try again later." + err);
             } finally {
                 setLoading(false);
             }
@@ -84,6 +86,7 @@ const AdminView: React.FC = () => {
                                 <TableCell>Created At</TableCell>
                                 <TableCell>Last Updated</TableCell>
                                 <TableCell>Messages</TableCell>
+                                <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -97,6 +100,15 @@ const AdminView: React.FC = () => {
                                     <TableCell>{new Date(lead.createdAt).toLocaleString()}</TableCell>
                                     <TableCell>{new Date(lead.updatedAt).toLocaleString()}</TableCell>
                                     <TableCell>{lead.chatHistory.length}</TableCell>
+                                    <TableCell>
+                                        <Button
+                                            variant="contained"
+                                            size="small"
+                                            onClick={() => navigate(`/chat/${encodeURIComponent(lead.email)}`)}
+                                        >
+                                            View Chat
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

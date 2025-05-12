@@ -26,7 +26,6 @@ export const sendMessage = async (email: string, message: string): Promise<ChatR
         });
         return response.data;
     } catch (error) {
-        console.error("Error sending message:", error);
         throw error;
     }
 };
@@ -36,7 +35,6 @@ export const getLeads = async () => {
         const response = await api.get("/leads");
         return response.data;
     } catch (error) {
-        console.error("Error fetching leads:", error);
         throw error;
     }
 };
@@ -46,7 +44,6 @@ export const getLeadByEmail = async (email: string) => {
         const response = await api.get(`/leads/${email}`);
         return response.data;
     } catch (error) {
-        console.error("Error fetching lead:", error);
         throw error;
     }
 };
@@ -56,7 +53,6 @@ export const getChatHistory = async (email: string) => {
         const response = await api.get(`/leads/${email}`);
         return response.data;
     } catch (error) {
-        console.error("Error fetching lead:", error);
         throw error;
     }
 };

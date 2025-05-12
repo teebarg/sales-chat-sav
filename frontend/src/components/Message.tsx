@@ -55,10 +55,15 @@ const Message: React.FC<MessageProps> = ({ message }) => {
             <Paper
                 elevation={1}
                 sx={{
-                    p: 2,
+                    px: 2,
+                    py: 1,
                     maxWidth: "70%",
                     backgroundColor: isUser ? "primary.light" : "grey.100",
                     color: isUser ? "white" : "text.primary",
+                    borderTopLeftRadius: 14,
+                    borderTopRightRadius: 14,
+                    borderBottomLeftRadius: !isUser ? 0 : 14,
+                    borderBottomRightRadius: isUser ? 0 : 14,
                 }}
             >
                 <Typography variant="body1" sx={{ whiteSpace: "pre-wrap" }}>
