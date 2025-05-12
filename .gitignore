@@ -16,17 +16,6 @@ node_modules/
 .env.development.local
 .env.test.local
 .env.production.local
-client/.env
-client/.env.local
-client/.env.development.local
-client/.env.test.local
-client/.env.production.local
-
-server/.env
-server/.env.local
-server/.env.development.local
-server/.env.test.local
-server/.env.production.local
 
 # Debug logs
 npm-debug.log*
@@ -69,10 +58,7 @@ server/.env
 client/dist/
 client/node_modules/
 client/.env
-client/.env.local
-client/.env.development.local
-client/.env.test.local
-client/.env.production.local
+client/.env.example
 
 # Misc
 .DS_Store
