@@ -55,10 +55,9 @@ server/node_modules/
 server/.env
 
 # Client specific
-client/dist/
-client/node_modules/
-client/.env
-client/.env.example
+frontend/dist/
+frontend/node_modules/
+frontend/.env
 
 # Misc
 .DS_Store
