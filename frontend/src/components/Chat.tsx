@@ -1,7 +1,7 @@
 import { Box, Paper, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getChatHistory, sendMessage } from "../services/api";
+import { getLeadByEmail, sendMessage } from "../services/api";
 import { Message as MessageType } from "../types";
 import ChatInput from "./ChatInput";
 import Message from "./Message";
@@ -14,7 +14,7 @@ const Chat: React.FC = () => {
         {
             role: "assistant",
             content:
-                "Hi there! I'm your AI sales assistant for KanhaSoftware.\n\nThank you for your interest! Could you tell me more about your specific needs and timeline?",
+                "Hi there! I'm your AI sales assistant for KanhaSoftware.\n\nThank you for your interest! Could you tell me more about your specific needs?",
             timestamp: new Date(),
         },
     ]);
@@ -32,7 +32,7 @@ const Chat: React.FC = () => {
     useEffect(() => {
         const fetchChatHistory = async () => {
             try {
-                const response = await getChatHistory(decodedEmail);
+                const response = await getLeadByEmail(decodedEmail);
                 setMessages((prev) => [...prev, ...response.chatHistory]);
             } catch (error) {
                 // console.error("Error fetching chat history:", error);
@@ -61,10 +61,9 @@ const Chat: React.FC = () => {
             };
             setMessages((prev) => [...prev, assistantMessage]);
         } catch (error) {
-            console.error("Error sending message:", error);
             const errorMessage: MessageType = {
                 role: "assistant",
-                content: "Sorry, there was an error processing your message. Please try again.",
+                content: "Sorry, there was an error processing your message. Please try again." + error,
                 timestamp: new Date(),
             };
             setMessages((prev) => [...prev, errorMessage]);

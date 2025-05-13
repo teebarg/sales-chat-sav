@@ -221,8 +221,8 @@ const AdminView: React.FC = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {filteredLeads.map((lead) => (
-                                <TableRow key={lead.email}>
+                            {filteredLeads.map((lead: Lead, idx: number) => (
+                                <TableRow key={idx}>
                                     <TableCell>{lead.email}</TableCell>
                                     <TableCell>{lead.companyName}</TableCell>
                                     <TableCell>

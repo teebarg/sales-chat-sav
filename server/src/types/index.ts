@@ -15,11 +15,6 @@ export interface Lead {
   updatedAt: Date;
 }
 
-export interface ChatResponse {
-  response: string;
-  relevanceTag: LeadRelevance;
-}
-
 export interface ConversationState {
   hasAskedEmail: boolean;
   hasAskedCompany: boolean;

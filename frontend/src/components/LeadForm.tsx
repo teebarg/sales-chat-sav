@@ -34,10 +34,10 @@ const LeadForm: React.FC = () => {
         <Container maxWidth="sm">
             <Paper elevation={3} sx={{ py: 8, px: 6, mt: 4 }}>
                 <Typography variant="h5" component="h1" gutterBottom align="center" sx={{ mb: 1, fontWeight: "bold" }}>
-                    Welcome to Our Sales Assistant
+                    Welcome to Our AI Sales Assistant
                 </Typography>
                 <Typography variant="body1" gutterBottom align="center" sx={{ mb: 4 }}>
-                    Please provide your information to start the conversation
+                    Please provide your email to start the conversation
                 </Typography>
 
                 <Box component="form" onSubmit={handleSubmit} noValidate>

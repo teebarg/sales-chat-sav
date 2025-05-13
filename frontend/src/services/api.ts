@@ -47,12 +47,3 @@ export const getLeadByEmail = async (email: string) => {
         throw error;
     }
 };
-
-export const getChatHistory = async (email: string) => {
-    try {
-        const response = await api.get(`/leads/${email}`);
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-};
