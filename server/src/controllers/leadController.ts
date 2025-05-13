@@ -19,6 +19,7 @@ export class LeadController {
                 lead = new Lead({
                     email,
                     relevanceTag: "Weak lead",
+                    score: 0,
                     chatHistory: [],
                     conversationState: {
                         hasAskedEmail: false,
@@ -46,6 +47,8 @@ export class LeadController {
             lead.relevanceTag = result.updatedLead.relevanceTag;
 
             lead.companyName = result.updatedLead.companyName;
+
+            lead.score = result.updatedLead.score;
 
             // Add AI response to chat history
             lead.chatHistory.push({

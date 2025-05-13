@@ -213,6 +213,7 @@ const AdminView: React.FC = () => {
                             <TableRow>
                                 <TableCell>Email</TableCell>
                                 <TableCell>Company Name</TableCell>
+                                <TableCell>Score</TableCell>
                                 <TableCell>Relevance</TableCell>
                                 <TableCell>Created At</TableCell>
                                 <TableCell>Last Updated</TableCell>
@@ -225,6 +226,7 @@ const AdminView: React.FC = () => {
                                 <TableRow key={idx}>
                                     <TableCell>{lead.email}</TableCell>
                                     <TableCell>{lead.companyName}</TableCell>
+                                    <TableCell>{lead.score || 0}</TableCell>
                                     <TableCell>
                                         <Chip label={lead.relevanceTag} color={getRelevanceColor(lead.relevanceTag)} size="small" />
                                     </TableCell>

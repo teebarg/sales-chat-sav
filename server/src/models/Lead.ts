@@ -5,6 +5,7 @@ export interface ILead extends Document {
     email: string;
     companyName: string;
     relevanceTag: "Not relevant" | "Weak lead" | "Hot lead" | "Very big potential customer";
+    score: number;
     chatHistory: Array<{
         role: "user" | "assistant";
         content: string;
@@ -31,6 +32,10 @@ const LeadSchema: Schema = new Schema(
         relevanceTag: {
             type: String,
             enum: ["Not relevant", "Weak lead", "Hot lead", "Very big potential customer"],
+            required: true,
+        },
+        score: {
+            type: Number,
             required: true,
         },
         chatHistory: [

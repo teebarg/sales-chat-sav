@@ -10,6 +10,7 @@ export interface Lead {
   email: string;
   companyName: string;
   relevanceTag: LeadRelevance;
+  score: number;
   chatHistory: Message[];
   createdAt: Date;
   updatedAt: Date;

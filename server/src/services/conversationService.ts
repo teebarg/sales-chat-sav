@@ -1,64 +1,137 @@
-import { ILead } from "../models/Lead";
-import { ConversationState, Lead, LeadRelevance } from "../types";
+import { ConversationState, LeadRelevance } from "../types";
 
 const CALENDLY_LINK = "https://calendly.com/kanhasoft/demo";
 
-const NOT_RELEVANT_KEYWORDS = ["student", "no budget", "personal project", "learning", "hobby", "non-profit", "charity", "educational"];
+// Score-weighted keyword categories
+const SCORE_KEYWORDS = {
+    NOT_RELEVANT: {
+        keywords: ["student", "no budget", "personal project", "learning", "hobby", "non-profit", "charity", "educational"],
+        score: -50,
+    },
+    WEAK_LEAD: {
+        keywords: ["side project", "unsure about budget", "small team", "startup", "exploring options", "testing", "prototype"],
+        score: 10,
+    },
+    HOT_LEAD: {
+        keywords: ["scaling", "hiring developers", "growing team", "budget approved", "urgent", "immediate need", "expansion", "company scaling"],
+        score: 30,
+    },
+    VERY_BIG_POTENTIAL: {
+        keywords: ["enterprise", "large company", "1000+ employees", "fortune 500", "global presence", "multiple locations", "enterprise solution"],
+        score: 40,
+    },
+};
 
-const WEAK_LEAD_KEYWORDS = ["side project", "unsure about budget", "small team", "startup", "exploring options", "testing", "prototype"];
-
-const HOT_LEAD_KEYWORDS = ["scaling", "hiring developers", "growing team", "budget approved", "urgent", "immediate need", "expansion", "company scaling"];
-
-const VERY_BIG_POTENTIAL_KEYWORDS = [
-    "enterprise",
-    "large company",
-    "1000+ employees",
-    "fortune 500",
-    "global presence",
-    "multiple locations",
-    "enterprise solution",
+const NO_BUDGET_KEYWORDS = [
+    "no budget",
+    "not sure",
+    "don't know",
+    "none",
+    "no idea",
+    "undecided",
+    "unsure",
+    "haven't decided",
+    "later",
+    "not sure about budget",
+    "no money",
+    "not budgeted",
+    "free"
 ];
+
+const calculateLeadScore = (message: string): number => {
+    const messageLower = message.toLowerCase();
+    let score = 0;
+
+    Object.values(SCORE_KEYWORDS).forEach(({ keywords, score: keywordScore }) => {
+        for (const keyword of keywords) {
+            if (messageLower.includes(keyword)) {
+                score += keywordScore;
+            }
+        }
+    });
+
+    return Math.max(0, Math.min(score, 100)); // Clamp to 0–100
+};
+
+const getRelevanceTagFromScore = (score: number): LeadRelevance => {
+    if (score <= 0) return "Not relevant";
+    if (score < 30) return "Weak lead";
+    if (score < 70) return "Hot lead";
+    return "Very big potential customer";
+};
+
+const parseBudget = (message: string): number | null => {
+    const lowered = message.toLowerCase();
+
+    if (NO_BUDGET_KEYWORDS.some(keyword => lowered.includes(keyword))) {
+        return -1; // Special flag for no budget
+    }
+
+    const cleaned = lowered.replace(/[,₦$]/g, "");
+    const match = cleaned.match(/(\d+)(k)?/);
+    if (!match) return null;
+
+    let amount = parseInt(match[1], 10);
+    if (match[2] === "k") amount *= 1000;
+
+    return amount;
+};
+
+const updateScoreFromBudget = (budget: number): number => {
+    if (budget < 2000) return -10;
+    if (budget < 10000) return 5;
+    if (budget < 50000) return 15;
+    return 30;
+};
+
+const updateScoreFromTimeline = (message: string): number => {
+    const lower = message.toLowerCase();
+
+    if (/(immediate|asap|urgent|right away)/.test(lower)) return 20;
+    if (/(next month|within a month|few weeks)/.test(lower)) return 15;
+    if (/(1[-–]?3 months|in 2 months|couple of months)/.test(lower)) return 10;
+    if (/(3[-–]?6 months|in 4 months)/.test(lower)) return 5;
+    if (/(6 months|next year|after a year)/.test(lower)) return -5;
+    if (/(not sure|no rush|later|eventually)/.test(lower)) return -10;
+
+    return 0;
+};
 
 export const processUserMessage = (
     message: string,
     lead: any,
     conversationState: ConversationState
 ): { response: string; updatedLead: any; updatedState: ConversationState } => {
-    // Clone the objects to avoid mutation
-    const updatedLead = { email: lead.email, companyName: lead.companyName, relevanceTag: lead.relevanceTag };
-    const updatedState = { ...conversationState };
+    const updatedLead = {
+        email: lead.email,
+        companyName: lead.companyName,
+        relevanceTag: lead.relevanceTag,
+        score: lead.score ?? 0,
+    };
 
+    const updatedState = { ...conversationState };
     let response = "";
 
-    const messageLower = message.toLowerCase();
-
-    // Try to extract email if we haven't got it yet
+    // Try to extract email if not available
     if (!updatedLead.email) {
         const emailRegex = /[\w.-]+@[\w.-]+\.\w+/;
         const emailMatch = message.match(emailRegex);
-
-        if (emailMatch) {
-            updatedLead.email = emailMatch[0];
-        }
+        if (emailMatch) updatedLead.email = emailMatch[0];
     }
 
-    // Try to extract company name from message if we haven't got it
+    // Try to extract company name
     if (!updatedLead.companyName && !updatedState.hasAskedCompany) {
-        // Look for "at [Company]" or "for [Company]" patterns
         const companyRegex = /(?:at|for|with|from)\s+([A-Z][A-Za-z0-9\s&]+)(?:\.|,|\s|$)/;
         const companyMatch = message.match(companyRegex);
-
-        if (companyMatch && companyMatch[1] && companyMatch[1].length > 1) {
+        if (companyMatch && companyMatch[1]) {
             updatedLead.companyName = companyMatch[1].trim();
         }
     }
 
-    // Handle conversation flow based on state
     if (!updatedState.hasAskedEmail) {
-        if (updatedLead.email) {
-            // We already extracted email from their message
-            updatedState.hasAskedEmail = true;
+        updatedState.hasAskedEmail = true;
 
+        if (updatedLead.email) {
             if (!updatedLead.companyName) {
                 updatedState.hasAskedCompany = true;
                 response = `Thanks for sharing your email ${updatedLead.email}! What company are you with?`;
@@ -68,35 +141,29 @@ export const processUserMessage = (
                 response = `Thanks for sharing your email and that you're with ${updatedLead.companyName}! What's your budget range for this project?`;
             }
         } else {
-            updatedState.hasAskedEmail = true;
-            response =
-                "Hi there! I'd be happy to discuss how our software development services can help you. To start, could you please share your email address so we can stay in touch?";
+            response = "Hi there! Could you please share your email address so we can stay in touch?";
         }
 
         return { response, updatedLead, updatedState };
     }
 
     if (!updatedLead.email && updatedState.hasAskedEmail) {
-        // Check for email in this message again
         const emailRegex = /[\w.-]+@[\w.-]+\.\w+/;
         const emailMatch = message.match(emailRegex);
-
         if (emailMatch) {
             updatedLead.email = emailMatch[0];
-
             if (!updatedState.hasAskedCompany) {
                 updatedState.hasAskedCompany = true;
-                response = `Thanks for sharing your email ${updatedLead.email}! What company are you with?`;
+                response = `Thanks! What company are you with?`;
             }
         } else {
-            response = "I didn't catch your email address. We need this to follow up with you. Could you please share it?";
+            response = "I didn't catch your email. Could you please share it so we can follow up?";
         }
 
         return { response, updatedLead, updatedState };
     }
 
     if (!updatedLead.companyName && updatedState.hasAskedCompany) {
-        // If we asked for company and don't have it yet, assume this message contains it
         if (message.length > 1 && message.length < 100) {
             updatedLead.companyName = message;
             updatedState.hasAskedBudget = true;
@@ -115,93 +182,74 @@ export const processUserMessage = (
     }
 
     if (updatedState.hasAskedBudget && !updatedState.hasAskedTeamSize) {
-        // Process budget information for lead relevance
-        if (NOT_RELEVANT_KEYWORDS.some((keyword) => messageLower.includes(keyword))) {
-            updatedLead.relevanceTag = "Not relevant";
-        } else if (WEAK_LEAD_KEYWORDS.some((keyword) => messageLower.includes(keyword))) {
-            updatedLead.relevanceTag = "Weak lead";
-        } else if (HOT_LEAD_KEYWORDS.some((keyword) => messageLower.includes(keyword))) {
-            updatedLead.relevanceTag = "Hot lead";
-        } else if (VERY_BIG_POTENTIAL_KEYWORDS.some((keyword) => messageLower.includes(keyword))) {
-            updatedLead.relevanceTag = "Very big potential customer";
-        } else {
-            updatedLead.relevanceTag = "Weak lead";
-        }
+        const budget = parseBudget(message);
 
-        updatedState.hasAskedTeamSize = true;
-        response = "How many people are on your development team currently?";
+        if (budget === -1) {
+            // They said "no budget" or something like that
+            updatedLead.score -= 10;
+            updatedLead.relevanceTag = getRelevanceTagFromScore(updatedLead.score);
+            updatedState.hasAskedTeamSize = true;
+            response = "Thanks for letting me know. How many people are on your development team currently?";
+        } else if (budget !== null) {
+            updatedLead.score += updateScoreFromBudget(budget);
+            updatedLead.relevanceTag = getRelevanceTagFromScore(updatedLead.score);
+            updatedState.hasAskedTeamSize = true;
+            response = "Thanks for sharing your budget! How many people are on your development team currently?";
+        } else {
+            updatedState.hasAskedBudget = true;
+            response = "Thanks! Just to clarify, what's your approximate budget for this project?";
+        }
         return { response, updatedLead, updatedState };
     }
 
     if (updatedState.hasAskedTeamSize && !updatedState.hasAskedTimeline) {
-        // Process team size for lead relevance
-        if (
-            VERY_BIG_POTENTIAL_KEYWORDS.some((keyword) => messageLower.includes(keyword)) ||
-            parseInt(message) > 500
-        ) {
-            updatedLead.relevanceTag = "Very big potential customer";
-        } else if (
-            HOT_LEAD_KEYWORDS.some((keyword) => messageLower.includes(keyword)) ||
-            !messageLower.includes("just me")
-        ) {
-            updatedLead.relevanceTag = "Hot lead";
-        } else {
-            updatedLead.relevanceTag = "Weak lead";
+        const size = parseInt(message.replace(/\D/g, ""), 10);
+        if (!isNaN(size)) {
+            if (size >= 500) updatedLead.score += 30;
+            else if (size >= 50) updatedLead.score += 15;
+            else if (size >= 10) updatedLead.score += 5;
         }
 
+        updatedLead.relevanceTag = getRelevanceTagFromScore(updatedLead.score);
         updatedState.hasAskedTimeline = true;
         response = "What's your timeline for this project?";
         return { response, updatedLead, updatedState };
     }
 
     if (updatedState.hasAskedTimeline && !updatedState.hasFinishedQualifying) {
-        // Make final determination if we haven't already
-        if (!updatedLead.relevanceTag) {
-            // Default to weak lead if nothing triggered our rules
-            updatedLead.relevanceTag = "Weak lead";
-        }
-
         updatedState.hasFinishedQualifying = true;
 
-        // Different responses based on lead relevance
-        if (updatedLead.relevanceTag === "Not relevant") {
-            response =
-                "Thank you for sharing those details. While we typically work with businesses with established budgets, I'd be happy to point you to some resources that might help with your learning or side project. Would that be helpful?";
-        } else if (updatedLead.relevanceTag === "Weak lead") {
-            response =
-                "Thanks for sharing your project details. We do work with projects of various sizes. Could you tell me a bit more about your specific requirements so I can see if we might be a good fit?";
-        } else {
-            // For Hot lead or Very big potential customer, offer Calendly
-            updatedState.hasOfferedCalendly = true;
-            response =
-                `Great! Based on what you've shared, I think our team would be a perfect fit for your project. I'd like to schedule a demo with one of our solution architects to discuss how we can help you achieve your goals.\n\nYou can book a time directly here: ${CALENDLY_LINK}\n\nIs there anything specific you'd like us to prepare for the demo?`;
-        }
+        const timelineScore = updateScoreFromTimeline(message);
+        updatedLead.score += timelineScore;
+        updatedLead.relevanceTag = getRelevanceTagFromScore(updatedLead.score);
+
+        response = "Is there anything else you'd like us to know about your project or company?"
 
         return { response, updatedLead, updatedState };
     }
 
-    // General conversation after qualification
     if (updatedState.hasFinishedQualifying) {
-        if (updatedLead.relevanceTag === "Hot lead" || updatedLead.relevanceTag === "Very big potential customer") {
+        const score = calculateLeadScore(message);
+        updatedLead.score += score;
+        updatedLead.relevanceTag = getRelevanceTagFromScore(updatedLead.score);
+
+        if (["Hot lead", "Very big potential customer"].includes(updatedLead.relevanceTag)) {
             if (!updatedState.hasOfferedCalendly) {
                 updatedState.hasOfferedCalendly = true;
-                response =
-                    `I think the best next step would be to schedule a demo with one of our solution architects who can provide more detailed information about our services and how we can help with your specific needs.\n\nYou can book a time here: ${CALENDLY_LINK}`;
+                response = `Great! Based on what you've shared, our team might be a perfect fit. I'd love to book a quick demo with a solutions architect.\n\nYou can book here: ${CALENDLY_LINK}\n\nAnything you'd like us to prepare for the demo?`;
             } else {
-                response = "Is there anything specific about our development services you'd like to know more about before our meeting?";
+                response = "Is there anything else you'd like to know about our services before the meeting?";
             }
         } else if (updatedLead.relevanceTag === "Weak lead") {
             response =
-                "We appreciate your interest! While your current needs might be at an early stage, we'd be happy to keep in touch as your project develops. Is there any specific information about our services that would be helpful for you right now?";
+                "Thanks again for your interest, we will get back to you when we have more information. We look forward to working with you in the future!";
         } else {
-            response =
-                "Thank you for your interest. While we might not be the right fit for your current situation, please feel free to reach out in the future if your needs change.";
+            response = "Thanks for the info. We typically work with businesses with established budgets, but I’d be happy to point you to learning resources if you’d like!";
         }
 
         return { response, updatedLead, updatedState };
     }
 
-    // Fallback response
-    response = "I appreciate your message. Is there anything specific about our software development services you will like to know?";
+    response = "Thanks for reaching out! How can I help with your project today?";
     return { response, updatedLead, updatedState };
 };
