@@ -6,12 +6,12 @@ An intelligent web-based assistant that qualifies leads through natural conversa
 
 - Natural conversation interface for lead qualification
 - Intelligent lead scoring and classification
-- Automatic demo scheduling for qualified leads
 - MongoDB integration for conversation storage
 - Modern React frontend with Material UI
 - TypeScript backend with Node.js
 - Admin dashboard for lead management
 - Real-time chat history viewing
+- Docker containerization for easy deployment
 
 ## Tech Stack
 
@@ -19,7 +19,8 @@ An intelligent web-based assistant that qualifies leads through natural conversa
 - Backend: Node.js + TypeScript + Express
 - Database: MongoDB
 - AI: Rule-based scoring system (with optional LLM integration)
-- Deployment: Vercel (Frontend) + Render (Backend)
+- Deployment: Docker + Docker Compose
+- Web Server: Nginx
 
 ## Architecture
 
@@ -62,6 +63,7 @@ An intelligent web-based assistant that qualifies leads through natural conversa
 - MongoDB (local or Atlas)
 - npm or yarn
 - Git
+- Docker and Docker Compose (for containerized deployment)
 
 ### Local Development Setup
 
@@ -72,61 +74,51 @@ An intelligent web-based assistant that qualifies leads through natural conversa
    cd al-sales-app
    ```
 
-2. Backend Setup:
+2. Install dependencies:
 
    ```bash
-   cd server
-   npm install
-   # Create .env file
-   echo "MONGODB_URI=your_mongodb_connection_string
-   PORT=8000" > .env
-   npm run dev
+   make install
    ```
 
-3. Frontend Setup:
+3. Start development servers:
 
    ```bash
-   cd frontend
-   npm install
-   # Create .env file
-   echo "REACT_APP_API_URL=http://localhost:8000/api" > .env
-   npm start
+   make dev
    ```
 
-## Deployment
+### Environment Configuration
 
-### Backend Deployment (Render)
+#### Backend (.env)
 
-1. Create a Render account
-2. Create a new Web Service
-3. Connect your Git repository
-4. Configure the service:
-   - Build Command: `cd server && npm install && npm run build`
-   - Start Command: `cd server && npm start`
-   - Environment Variables:
-     - `MONGODB_URI`: Your MongoDB connection string
-     - `PORT`: 8000
+- `MONGODB_URI`: MongoDB connection string
+- `PORT`: Server port (default: 8000)
 
-### Frontend Deployment (Vercel)
+#### Frontend (.env)
 
-1. Create a Vercel account
-2. Import your Git repository
-3. Configure the project:
-   - Framework Preset: Create React App
-   - Build Command: `cd frontend && npm install && npm run build`
-   - Output Directory: `frontend/build`
-   - Environment Variables:
-     - `REACT_APP_API_URL`: Your deployed backend URL
+- `REACT_APP_API_URL`: Backend API URL (default: http://localhost:8000/api)
 
-### Database Setup (MongoDB Atlas)
+## Docker Configuration
 
-1. Create a MongoDB Atlas account
-2. Create a new cluster
-3. Set up database access:
-   - Create a database user
-   - Set up IP whitelist
-4. Get your connection string
-5. Add the connection string to your backend environment variables
+The application is containerized using Docker with the following services:
+
+### Run on docker
+
+```bash
+make docker-build
+make docker-up
+```
+
+### Stop docker
+
+```bash
+make docker-down
+```
+
+### Logs
+
+```bash
+make docker-logs
+```
 
 ## Lead Classification System
 

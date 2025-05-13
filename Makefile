@@ -1,12 +1,10 @@
 # Makefile for AI Sales Representative Application
+.PHONY: client server clean dev docker-build docker-up docker-down docker-logs
 
 # ANSI color codes
 GREEN=$(shell tput -Txterm setaf 2)
 YELLOW=$(shell tput -Txterm setaf 3)
 RESET=$(shell tput -Txterm sgr0)
-
-# Default target
-all: client server
 
 # Client target
 client:
@@ -25,4 +23,26 @@ dev: ## Serve the project in terminal
 	@echo "$(YELLOW)Running development in terminal...$(RESET)"
 	make -j 2 server client
 
-.PHONY: all client server clean
+# Docker commands
+docker-build:
+	docker compose build
+
+docker-up:
+	docker compose up
+
+docker-down:
+	docker compose down
+
+docker-logs:
+	docker compose logs -f
+
+
+# Help command
+help:
+	@echo "Available commands:"
+	@echo "  make dev           - Start both frontend and backend in development mode"
+	@echo "  make docker-build  - Build Docker images for production"
+	@echo "  make docker-up     - Start Docker containers for production"
+	@echo "  make docker-down   - Stop Docker containers for production"
+	@echo "  make docker-logs   - View Docker container logs for production"
+	@echo "  make clean         - Clean up node_modules and build directories"

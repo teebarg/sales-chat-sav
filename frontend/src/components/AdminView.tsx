@@ -238,6 +238,13 @@ const AdminView: React.FC = () => {
                                     </TableCell>
                                 </TableRow>
                             ))}
+                            {filteredLeads.length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={7} align="center">
+                                        No leads found
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
                 </TableContainer>
