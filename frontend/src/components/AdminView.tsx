@@ -230,12 +230,30 @@ const AdminView: React.FC = () => {
                                     <TableCell>
                                         <Chip label={lead.relevanceTag} color={getRelevanceColor(lead.relevanceTag)} size="small" />
                                     </TableCell>
-                                    <TableCell>{new Date(lead.createdAt).toLocaleString()}</TableCell>
-                                    <TableCell>{new Date(lead.updatedAt).toLocaleString()}</TableCell>
+                                    <TableCell>
+                                        {new Date(lead.createdAt).toLocaleString('en-US', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric',
+                                            hour: 'numeric',
+                                            minute: '2-digit',
+                                            hour12: true
+                                        })}
+                                    </TableCell>
+                                    <TableCell>
+                                        {new Date(lead.updatedAt).toLocaleString('en-US', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric',
+                                            hour: 'numeric',
+                                            minute: '2-digit',
+                                            hour12: true
+                                        })}
+                                    </TableCell>
                                     <TableCell>{lead.chatHistory.length}</TableCell>
                                     <TableCell>
                                         <Button variant="contained" size="small" onClick={() => navigate(`/chat/${encodeURIComponent(lead.email)}`)}>
-                                            View Chat
+                                            View
                                         </Button>
                                     </TableCell>
                                 </TableRow>

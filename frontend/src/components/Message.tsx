@@ -77,7 +77,11 @@ const Message: React.FC<MessageProps> = ({ message }) => {
                         color: isUser ? "rgba(255, 255, 255, 0.7)" : "text.secondary",
                     }}
                 >
-                    {new Date(message.timestamp).toLocaleTimeString()}
+                    {new Date(message.timestamp).toLocaleTimeString('en-US', {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true
+                    })}
                 </Typography>
             </Paper>
             {isUser && <Avatar alt="User" sx={{ width: 45, height: 45 }} />}

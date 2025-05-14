@@ -79,8 +79,8 @@ Your task:
 - Less than 3 → +0
 - 3 to 9 → +5
 - 10 to 49 → +10
-- 50 to 199 → +20
-- 200 or more → +30
+- 50 to 199 → +30
+- 200 or more → +40
 
 3. Use the customer's desired start time to assign urgency points:
 - Wants to start immediately / now / ASAP → +20 points
@@ -100,7 +100,7 @@ Use keywords from both the latest message and prior messages in chat history.
 5. Relevance Tag:
    - Based on score and keywords, classify the lead as one of:
      - "Not relevant" < 0
-     - "Weak lead" < 30
+     - "Weak lead" < 40
      - "Hot lead" < 70
      - "Very big potential customer" >= 70
 
