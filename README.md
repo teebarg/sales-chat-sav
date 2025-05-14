@@ -92,10 +92,11 @@ An intelligent web-based assistant that qualifies leads through natural conversa
 
 - `MONGODB_URI`: MongoDB connection string
 - `PORT`: Server port (default: 8000)
+- `GEMINI_API_KEY`: Your Google Gemini API key (required for AI conversations)
 
 #### Frontend (.env)
 
-- `REACT_APP_API_URL`: Backend API URL (default: http://localhost:8000/api)
+- `REACT_APP_API_URL`: Backend API URL (default: <http://localhost:8000/api>)
 
 ## Docker Configuration
 
@@ -204,6 +205,21 @@ make docker-logs
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
+
+## AI Integration
+
+The application uses Google's Gemini AI for natural conversation processing. If the Gemini API is unavailable or encounters an error, the system will fall back to the rule-based scoring system.
+
+### Gemini AI Features
+
+- Natural language understanding
+- Context-aware responses
+- Lead qualification through conversation
+- Fallback to rule-based system if API fails
+
+### Rule-based Fallback System
+
+When Gemini API is unavailable, the system automatically switches to the rule-based scoring system described below.
 
 ## License
 

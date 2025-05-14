@@ -5,6 +5,7 @@ import { getLeadByEmail, sendMessage } from "../services/api";
 import { Message as MessageType } from "../types";
 import ChatInput from "./ChatInput";
 import Message from "./Message";
+import TypingIndicator from "./Typing";
 
 const Chat: React.FC = () => {
     const { email } = useParams<{ email: string }>();
@@ -127,6 +128,7 @@ const Chat: React.FC = () => {
                     {messages.map((message, index) => (
                         <Message key={index} message={message} />
                     ))}
+                    {loading && <TypingIndicator />}
                     <div ref={messagesEndRef} />
                 </Box>
                 <Box sx={{ borderTop: "1px solid #ccc", p: 2 }}>
