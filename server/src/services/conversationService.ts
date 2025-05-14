@@ -1,3 +1,4 @@
+import { ILead } from "../models/Lead";
 import { ConversationState, LeadRelevance } from "../types";
 
 const CALENDLY_LINK = "https://calendly.com/kanhasoft/demo";
@@ -35,7 +36,7 @@ const NO_BUDGET_KEYWORDS = [
     "not sure about budget",
     "no money",
     "not budgeted",
-    "free"
+    "free",
 ];
 
 const calculateLeadScore = (message: string): number => {
@@ -63,7 +64,7 @@ const getRelevanceTagFromScore = (score: number): LeadRelevance => {
 const parseBudget = (message: string): number | null => {
     const lowered = message.toLowerCase();
 
-    if (NO_BUDGET_KEYWORDS.some(keyword => lowered.includes(keyword))) {
+    if (NO_BUDGET_KEYWORDS.some((keyword) => lowered.includes(keyword))) {
         return -1; // Special flag for no budget
     }
 
@@ -97,11 +98,7 @@ const updateScoreFromTimeline = (message: string): number => {
     return 0;
 };
 
-export const processUserMessage = (
-    message: string,
-    lead: any,
-    conversationState: ConversationState
-): { response: string; updatedLead: any; updatedState: ConversationState } => {
+export const processUserMessage = (message: string, lead: ILead): { response: string; updatedLead: any; updatedState: ConversationState } => {
     const updatedLead = {
         email: lead.email,
         companyName: lead.companyName,
@@ -109,7 +106,7 @@ export const processUserMessage = (
         score: lead.score ?? 0,
     };
 
-    const updatedState = { ...conversationState };
+    const updatedState = { ...lead.conversationState };
     let response = "";
 
     // Try to extract email if not available
@@ -223,7 +220,7 @@ export const processUserMessage = (
         updatedLead.score += timelineScore;
         updatedLead.relevanceTag = getRelevanceTagFromScore(updatedLead.score);
 
-        response = "Is there anything else you'd like us to know about your project or company?"
+        response = "Is there anything else you'd like us to know about your project or company?";
 
         return { response, updatedLead, updatedState };
     }
@@ -244,7 +241,8 @@ export const processUserMessage = (
             response =
                 "Thanks again for your interest, we will get back to you when we have more information. We look forward to working with you in the future!";
         } else {
-            response = "Thanks for the info. We typically work with businesses with established budgets, but I’d be happy to point you to learning resources if you’d like!";
+            response =
+                "Thanks for the info. We typically work with businesses with established budgets, but I’d be happy to point you to learning resources if you’d like!";
         }
 
         return { response, updatedLead, updatedState };

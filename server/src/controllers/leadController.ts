@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
-import Lead, { ILead } from "../models/Lead";
+import Lead from "../models/Lead";
 import { processUserMessage } from "../services/conversationService";
+import { processWithGemini } from "../services/geminiService";
 
 export class LeadController {
     public async handleMessage(req: Request, res: Response): Promise<void> {
@@ -22,7 +23,7 @@ export class LeadController {
                     score: 0,
                     chatHistory: [],
                     conversationState: {
-                        hasAskedEmail: false,
+                        hasAskedEmail: true,
                         hasAskedCompany: false,
                         hasAskedBudget: false,
                         hasAskedTeamSize: false,
@@ -40,15 +41,22 @@ export class LeadController {
                 timestamp: new Date(),
             });
 
-          const result = processUserMessage(message, lead, lead.conversationState);
+            // Process using Gemini
+            let result;
+            try {
+                result = await processWithGemini(message, lead);
+            } catch (error) {
+                // If Gemini fails, fallback to user message processing
+                console.error("Error processing with Gemini:", error);
+                result = await processUserMessage(message, lead);
+            }
 
-            lead.conversationState = result.updatedState;
-
+            // Update lead fields
+            lead.email = result.updatedLead.email || lead.email;
+            lead.companyName = result.updatedLead.companyName || lead.companyName;
             lead.relevanceTag = result.updatedLead.relevanceTag;
-
-            lead.companyName = result.updatedLead.companyName;
-
             lead.score = result.updatedLead.score;
+            lead.conversationState = result.updatedState;
 
             // Add AI response to chat history
             lead.chatHistory.push({
