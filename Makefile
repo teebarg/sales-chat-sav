@@ -44,7 +44,7 @@ frontend-test:
 
 test: ## Run all tests
 	@echo "$(YELLOW)Running tests...$(RESET)"
-	make -j 2 server-test client-test
+	make -j 2 server-test frontend-test
 
 # Help command
 help:

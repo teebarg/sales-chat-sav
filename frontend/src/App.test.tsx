@@ -1,58 +1,47 @@
-import { render, screen } from "@testing-library/react";
-import {  MemoryRouter } from "react-router-dom";
+import { render, screen, waitFor } from "@testing-library/react";
 import App from "./App";
-import { ThemeProvider, createTheme } from "@mui/material";
 
-// Mock the child components
-jest.mock("./components/LeadForm", () => () => <div data-testid="lead-form">Lead Form Component</div>);
-jest.mock("./components/Chat", () => () => <div data-testid="chat">Chat Component</div>);
-jest.mock("./pages/NotFound", () => () => <div data-testid="not-found">Not Found Component</div>);
+// Mock the API module
+jest.mock("./services/api", () => ({
+    getLeadByEmail: jest.fn(),
+    sendMessage: jest.fn(),
+}));
+
+beforeAll(() => {
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+});
+
 jest.mock("./pages/AdminView", () => () => <div data-testid="admin-view">Admin View Component</div>);
 
-// Mock theme for consistent testing
-const theme = createTheme();
-
 describe("App Component", () => {
-    test("renders without crashing", () => {
+    test("our app renders", () => {
         render(<App />);
         expect(screen.getByText("AI Sales Assistant")).toBeInTheDocument();
     });
 
-    test("renders the LeadForm component on the home route", () => {
+    test("user sees lead form on landing page", () => {
+        window.history.pushState({}, "", "/"); // simulate "/"
         render(<App />);
-        expect(screen.getByTestId("lead-form")).toBeInTheDocument();
+        expect(screen.getByText(/Start Conversation/i)).toBeInTheDocument();
     });
 
-    test("renders the AdminView component on the admin route", () => {
-        render(
-            <MemoryRouter initialEntries={["/admin"]}>
-                <ThemeProvider theme={theme}>
-                    <App />
-                </ThemeProvider>
-            </MemoryRouter>
-        );
+    test("user can go to admin page", () => {
+        window.history.pushState({}, "", "/admin");
+        render(<App />);
         expect(screen.getByTestId("admin-view")).toBeInTheDocument();
     });
 
-    test("renders the NotFound component for unknown routes", () => {
-        render(
-            <MemoryRouter initialEntries={["/unknown-route"]}>
-                <ThemeProvider theme={theme}>
-                    <App />
-                </ThemeProvider>
-            </MemoryRouter>
-        );
-        expect(screen.getByTestId("not-found")).toBeInTheDocument();
+    test("page not found renders appropriately", () => {
+        window.history.pushState({}, "", "/unknown");
+        render(<App />);
+        expect(screen.getByText(/Page Not Found/i)).toBeInTheDocument();
     });
 
-    test("renders the Chat component with email parameter", () => {
-        render(
-            <MemoryRouter initialEntries={["/chat/test@example.com"]}>
-                <ThemeProvider theme={theme}>
-                    <App />
-                </ThemeProvider>
-            </MemoryRouter>
-        );
-        expect(screen.getByTestId("chat")).toBeInTheDocument();
+    test("renders Chat with email parameter", async () => {
+        window.history.pushState({}, "", "/chat/test@email.com");
+        render(<App />);
+        await waitFor(() => {
+            expect(screen.getByText(/How can we help with your software development needs?/i)).toBeInTheDocument();
+        });
     });
 });

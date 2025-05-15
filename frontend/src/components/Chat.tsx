@@ -34,7 +34,6 @@ const Chat: React.FC = () => {
         const fetchChatHistory = async () => {
             try {
                 const response = await getLeadByEmail(decodedEmail);
-                console.log("🚀 ~ fetchChatHistory ~ response:", response)
                 setMessages((prev) => [...prev, ...response.chatHistory]);
             } catch (error) {
                 // console.error("Error fetching chat history:", error);
