@@ -1,5 +1,5 @@
 # Makefile for AI Sales Representative Application
-.PHONY: client server clean dev docker-build docker-up docker-down docker-logs
+.PHONY: client server clean dev docker-build docker-up docker-down docker-logs test
 
 # ANSI color codes
 GREEN=$(shell tput -Txterm setaf 2)
@@ -36,6 +36,15 @@ docker-down:
 docker-logs:
 	docker compose logs -f
 
+# Test target
+server-test:
+	cd server && npm test
+frontend-test:
+	cd frontend && npm test
+
+test: ## Run all tests
+	@echo "$(YELLOW)Running tests...$(RESET)"
+	make -j 2 server-test client-test
 
 # Help command
 help:
@@ -46,3 +55,4 @@ help:
 	@echo "  make docker-down   - Stop Docker containers for production"
 	@echo "  make docker-logs   - View Docker container logs for production"
 	@echo "  make clean         - Clean up node_modules and build directories"
+	@echo "  make test          - Run all tests in both server and frontend"
