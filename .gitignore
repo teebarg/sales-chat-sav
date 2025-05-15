@@ -53,11 +53,13 @@ yarn-error.log*
 server/dist/
 server/node_modules/
 server/.env
+server/coverage
 
 # Client specific
 frontend/dist/
 frontend/node_modules/
 frontend/.env
+frontend/build
 
 # Misc
 .DS_Store
