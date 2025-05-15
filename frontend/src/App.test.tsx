@@ -20,7 +20,7 @@ describe("App Component", () => {
     });
 
     test("user sees lead form on landing page", () => {
-        window.history.pushState({}, "", "/"); // simulate "/"
+        window.history.pushState({}, "", "/");
         render(<App />);
         expect(screen.getByText(/Start Conversation/i)).toBeInTheDocument();
     });

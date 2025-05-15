@@ -30,7 +30,7 @@ describe("Chat component", () => {
         (api.getLeadByEmail as jest.Mock).mockResolvedValueOnce({ chatHistory: mockChatHistory });
 
         render(
-            <MemoryRouter initialEntries={["/chat/test%40example.com"]}>
+            <MemoryRouter initialEntries={["/chat/test%40email.com"]}>
                 <Routes>
                     <Route path="/chat/:email" element={<Chat />} />
                 </Routes>
@@ -50,7 +50,7 @@ describe("Chat component", () => {
         (api.sendMessage as jest.Mock).mockResolvedValueOnce({ response: "Thanks for reaching out!" });
 
         render(
-            <MemoryRouter initialEntries={["/chat/test%40example.com"]}>
+            <MemoryRouter initialEntries={["/chat/test%40email.com"]}>
                 <Routes>
                     <Route path="/chat/:email" element={<Chat />} />
                 </Routes>
