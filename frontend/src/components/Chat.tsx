@@ -81,8 +81,8 @@ const Chat: React.FC = () => {
                     flex: 1,
                     mb: 2,
                     overflow: "auto",
-                    backgroundColor: "background.paper",
-                    margin: "auto",
+                    bgcolor: "background.paper",
+                    m: "auto",
                     borderRadius: 2,
                     maxWidth: { xs: "100%", lg: "50%" },
                 }}
@@ -90,7 +90,7 @@ const Chat: React.FC = () => {
                 <Box
                     sx={{
                         p: 2,
-                        backgroundColor: "primary.main",
+                        bgcolor: "primary.main",
                         color: "primary.contrastText",
                         fontSize: "1.5rem",
                     }}
@@ -125,7 +125,7 @@ const Chat: React.FC = () => {
                         p: 2,
                     }}
                 >
-                    {messages.map((message, index) => (
+                    {messages.map((message: MessageType, index: number) => (
                         <Message key={index} message={message} />
                     ))}
                     {loading && <TypingIndicator />}

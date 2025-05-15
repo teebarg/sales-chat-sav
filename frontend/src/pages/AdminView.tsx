@@ -120,7 +120,7 @@ const AdminView: React.FC = () => {
 
     if (loading) {
         return (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+            <Box sx={{ pt: 2, display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
                 <CircularProgress />
             </Box>
         );
@@ -128,7 +128,7 @@ const AdminView: React.FC = () => {
 
     if (error) {
         return (
-            <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+            <Box sx={{ pt: 2, display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
                 <Typography color="error">{error}</Typography>
             </Box>
         );
@@ -137,7 +137,7 @@ const AdminView: React.FC = () => {
     return (
         <Container>
             <Box sx={{ pt: 2 }}>
-                <Typography variant="h5" component="h1" gutterBottom>
+                <Typography variant="h5" component="h1">
                     Lead Management
                 </Typography>
 
@@ -207,7 +207,7 @@ const AdminView: React.FC = () => {
                     </Grid>
                 </Paper>
 
-                <TableContainer component={Paper} sx={{ maxHeight: "65vh", overflow: "auto" }}>
+                <TableContainer component={Paper} sx={{ maxHeight: "60vh", overflow: "auto" }}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -231,23 +231,23 @@ const AdminView: React.FC = () => {
                                         <Chip label={lead.relevanceTag} color={getRelevanceColor(lead.relevanceTag)} size="small" />
                                     </TableCell>
                                     <TableCell>
-                                        {new Date(lead.createdAt).toLocaleString('en-US', {
-                                            year: 'numeric',
-                                            month: 'short',
-                                            day: 'numeric',
-                                            hour: 'numeric',
-                                            minute: '2-digit',
-                                            hour12: true
+                                        {new Date(lead.createdAt).toLocaleString("en-US", {
+                                            year: "numeric",
+                                            month: "short",
+                                            day: "numeric",
+                                            hour: "numeric",
+                                            minute: "2-digit",
+                                            hour12: true,
                                         })}
                                     </TableCell>
                                     <TableCell>
-                                        {new Date(lead.updatedAt).toLocaleString('en-US', {
-                                            year: 'numeric',
-                                            month: 'short',
-                                            day: 'numeric',
-                                            hour: 'numeric',
-                                            minute: '2-digit',
-                                            hour12: true
+                                        {new Date(lead.updatedAt).toLocaleString("en-US", {
+                                            year: "numeric",
+                                            month: "short",
+                                            day: "numeric",
+                                            hour: "numeric",
+                                            minute: "2-digit",
+                                            hour12: true,
                                         })}
                                     </TableCell>
                                     <TableCell>{lead.chatHistory.length}</TableCell>

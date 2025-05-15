@@ -10,13 +10,10 @@ const Message: React.FC<MessageProps> = ({ message }) => {
     const isUser = message.role === "user";
 
     const formatMessage = (content: string) => {
-        // Regular expression to match Calendly URLs
         const calendlyRegex = /(https:\/\/calendly\.com\/[^\s]+)/g;
 
-        // Split the content by Calendly URLs
         const parts = content.split(calendlyRegex);
 
-        // Map through parts and wrap URLs in Link components
         return parts.map((part, index) => {
             if (part.match(calendlyRegex)) {
                 return (

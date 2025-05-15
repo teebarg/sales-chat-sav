@@ -33,10 +33,10 @@ const LeadForm: React.FC = () => {
     return (
         <Container maxWidth="sm">
             <Paper elevation={3} sx={{ py: 8, px: 6, mt: 4 }}>
-                <Typography variant="h5" component="h1" gutterBottom align="center" sx={{ mb: 1, fontWeight: "bold" }}>
+                <Typography variant="h5" component="h1" sx={{ mb: 1, fontWeight: "bold", textAlign: "center" }}>
                     Welcome to Our AI Sales Assistant
                 </Typography>
-                <Typography variant="body1" gutterBottom align="center" sx={{ mb: 4 }}>
+                <Typography variant="body1" sx={{ mb: 2, textAlign: "center" }}>
                     Please provide your email to start the conversation
                 </Typography>
 

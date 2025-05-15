@@ -39,7 +39,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSubmit, isDisabled, loading }) 
                 onKeyPress={handleKeyPress}
                 placeholder="Type your message..."
                 disabled={isDisabled}
-                sx={{ backgroundColor: "background.paper" }}
+                sx={{ bgcolor: "background.paper" }}
             />
             <Button
                 color="primary"

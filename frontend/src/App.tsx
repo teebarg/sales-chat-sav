@@ -2,8 +2,8 @@ import { ThemeProvider, createTheme, CssBaseline, Container, Box, AppBar, Toolba
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import LeadForm from "./components/LeadForm";
 import Chat from "./components/Chat";
-import AdminView from "./components/AdminView";
-import NotFound from "./components/NotFound";
+import NotFound from "./pages/NotFound";
+import AdminView from "./pages/AdminView";
 
 const theme = createTheme({
     palette: {
@@ -15,6 +15,7 @@ const theme = createTheme({
         },
         background: {
             default: "#f5f5f5",
+            paper: "#fff",
         },
     },
     typography: {
@@ -42,7 +43,7 @@ const Navigation = () => {
                     </Button>
                 ) : (
                     <Button color="inherit" onClick={() => navigate("/")}>
-                        Back to Chat
+                        Back Home
                     </Button>
                 )}
             </Toolbar>
@@ -55,10 +56,10 @@ function App() {
         <ThemeProvider theme={theme}>
             <CssBaseline />
             <BrowserRouter>
-                <Box sx={{ flexGrow: 1, height: "100vh", overflow: "auto", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <Box sx={{ height: "100vh", overflow: "auto", display: "flex", flexDirection: "column", justifyContent: "center" }}>
                     <Navigation />
-                    <Container maxWidth="lg" sx={{flex: 1 }}>
-                        <Box sx={{py: 4 }}>
+                    <Container maxWidth="lg" sx={{ flex: 1, mt: 0, p: 0 }}>
+                        <Box sx={{ py: 4 }}>
                             <Routes>
                                 <Route path="/" element={<LeadForm />} />
                                 <Route path="/chat/:email" element={<Chat />} />
@@ -68,6 +69,12 @@ function App() {
                             </Routes>
                         </Box>
                     </Container>
+                    <Typography
+                        variant="body2"
+                        sx={{ mt: 2, textAlign: "center", color: "text.secondary", bgcolor: "background.paper", p: 2, fontWeight: "medium" }}
+                    >
+                        &copy; {new Date().getFullYear()} AI Sales Assistant
+                    </Typography>
                 </Box>
             </BrowserRouter>
         </ThemeProvider>
